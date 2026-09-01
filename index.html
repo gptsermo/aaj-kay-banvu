@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>आज काय बनवू? | रोजचा डबा व जेवणाचा प्रश्न ५ मिनिटांत सोडवा</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font Noto Sans Devanagari -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans Devanagari', sans-serif; }
+        .scrollbar-none::-webkit-scrollbar { display: none; }
+        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-amber-50 text-gray-800 min-h-screen flex flex-col antialiased">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-orange-600 text-white sticky top-0 z-50 shadow-md">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <span class="text-2xl">🍲</span>
+                <div>
+                    <h1 class="text-lg font-bold leading-tight">आज काय बनवू?</h1>
+                    <p class="text-[11px] text-orange-100 font-medium">रोजचा डबा व जेवणाचा सोपा उपाय</p>
+                </div>
+            </a>
+            <div class="flex items-center gap-2">
+                <a href="submit-recipe.html" class="text-xs bg-amber-400 text-orange-950 font-bold px-3 py-1.5 rounded-full shadow hover:bg-amber-300 transition flex items-center gap-1">
+                    <span>👩‍🍳</span> रेसिपी पाठवा
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+
+        <!-- Search & Filter Card -->
+        <section class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-orange-100 space-y-4">
+            
+            <!-- Quick Keyword Search (Supports Marathi + Hinglish) -->
+            <div>
+                <label for="search-input" class="block text-xs font-bold text-gray-600 mb-1.5">रेसिपी शोधा (मराठी किंवा English)</label>
+                <div class="relative">
+                    <input type="text" id="search-input" onkeyup="handleSearch()" placeholder="उदा. bhendi, batata, pithla, भात, उसळ..." 
+                           class="w-full pl-9 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-orange-500 focus:bg-white transition">
+                    <span class="absolute left-3 top-2.5 text-gray-400 text-sm">🔍</span>
+                </div>
+            </div>
+
+            <!-- Vegetable & Category Chips Filter -->
+            <div>
+                <h2 class="text-xs font-bold text-gray-600 mb-2">घरात काय उपलब्ध आहे?</h2>
+                <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none text-xs" id="veg-chips-container">
+                    <button onclick="setVegFilter('all', this)" class="veg-btn bg-orange-600 text-white font-semibold px-3.5 py-2 rounded-full border border-orange-600 whitespace-nowrap shadow-sm">
+                        सर्व पर्याय
+                    </button>
+                    <button onclick="setVegFilter('leftover', this)" class="veg-btn bg-amber-100 text-amber-900 font-bold px-3.5 py-2 rounded-full border border-amber-300 whitespace-nowrap hover:bg-amber-200">
+                        🍚 उरलेल्या अन्नातून (Zero Waste)
+                    </button>
+                    <button onclick="setVegFilter('emergency', this)" class="veg-btn bg-red-50 text-red-700 font-bold px-3.5 py-2 rounded-full border border-red-200 whitespace-nowrap hover:bg-red-100">
+                        🚨 भाजी नाहीये?
+                    </button>
+                    <button onclick="setVegFilter('leafy', this)" class="veg-btn bg-emerald-50 text-emerald-800 font-medium px-3.5 py-2 rounded-full border border-emerald-200 whitespace-nowrap hover:bg-emerald-100">
+                        🥬 पालेभाजी
+                    </button>
+                    <button onclick="setVegFilter('bhendi', this)" class="veg-btn bg-gray-50 text-gray-700 font-medium px-3.5 py-2 rounded-full border border-gray-200 whitespace-nowrap hover:bg-orange-50">
+                        भेंडी
+                    </button>
+                    <button onclick="setVegFilter('batata', this)" class="veg-btn bg-gray-50 text-gray-700 font-medium px-3.5 py-2 rounded-full border border-gray-200 whitespace-nowrap hover:bg-orange-50">
+                        बटाटा
+                    </button>
+                    <button onclick="setVegFilter('shimla-mirchi', this)" class="veg-btn bg-gray-50 text-gray-700 font-medium px-3.5 py-2 rounded-full border border-gray-200 whitespace-nowrap hover:bg-orange-50">
+                        शिमला मिरची
+                    </button>
+                </div>
+            </div>
+
+            <!-- Time Filter Chips -->
+            <div class="pt-1 border-t border-gray-100">
+                <h2 class="text-xs font-bold text-gray-600 mb-2">वेळ किती आहे?</h2>
+                <div class="flex gap-2 text-xs" id="time-chips-container">
+                    <button onclick="setTimeFilter('all', this)" class="time-btn bg-orange-600 text-white font-semibold px-3 py-1.5 rounded-lg border border-orange-600 shadow-sm">
+                        सर्व
+                    </button>
+                    <button onclick="setTimeFilter('15min', this)" class="time-btn bg-gray-50 text-gray-700 font-medium px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-orange-50">
+                        ⚡ १०-१५ मिनिटे (डबा स्पेशल)
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Status & Count Indicator -->
+        <div class="flex items-center justify-between px-1">
+            <h3 class="text-sm font-bold text-gray-800">
+                रेसिपी यादी (<span id="recipe-count" class="text-orange-600">०</span>)
+            </h3>
+            <button onclick="resetFilters()" class="text-xs text-orange-600 font-medium hover:underline">
+                सर्व फिल्टर्स रीसेट करा
+            </button>
+        </div>
+
+        <!-- Recipe Cards Grid -->
+        <section id="recipe-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <!-- Dynamic Cards Loaded from recipes-data.js -->
+        </section>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden bg-white p-8 rounded-2xl border border-dashed border-gray-300 text-center space-y-2">
+            <span class="text-3xl">🔍</span>
+            <p class="text-sm font-bold text-gray-700">या पर्यायामध्ये कोणतीही रेसिपी सापडली नाही!</p>
+            <p class="text-xs text-gray-500">कृपया वेगळा शब्द किंवा भाजीचा पर्याय निवडून पहा.</p>
+        </div>
+
+    </main>
+
+    <!-- Footer Links -->
+    <footer class="bg-white border-t border-gray-200 py-6 text-center text-xs text-gray-500 space-y-3 mt-auto">
+        <div class="flex justify-center gap-5 text-gray-600 font-medium">
+            <a href="legal/about.html" class="hover:text-orange-600">आमच्याबद्दल</a>
+            <span>•</span>
+            <a href="legal/contact.html" class="hover:text-orange-600">संपर्क</a>
+            <span>•</span>
+            <a href="legal/privacy.html" class="hover:text-orange-600">गोपनीयता धोरण (Privacy)</a>
+        </div>
+        <p>© 2026 आज काय बनवू? (AajKayBanvu.in) - सर्व हक्क राखीव.</p>
+    </footer>
+
+    <!-- Load Recipe Database File -->
+    <script src="recipes-data.js"></script>
+
+    <!-- Page Logic Script -->
+    <script>
+        let currentVeg = 'all';
+        let currentTime = 'all';
+        let searchQuery = '';
+
+        const leafyVegList = ['methi', 'palak', 'shepu', 'math', 'leafy'];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRecipes();
+        });
+
+        function setVegFilter(veg, btnElement) {
+            currentVeg = veg;
+            document.querySelectorAll('#veg-chips-container .veg-btn').forEach(btn => {
+                btn.className = "veg-btn bg-gray-50 text-gray-700 font-medium px-3.5 py-2 rounded-full border border-gray-200 whitespace-nowrap hover:bg-orange-50";
+            });
+            btnElement.className = "veg-btn bg-orange-600 text-white font-semibold px-3.5 py-2 rounded-full border border-orange-600 whitespace-nowrap shadow-sm";
+            renderRecipes();
+        }
+
+        function setTimeFilter(time, btnElement) {
+            currentTime = time;
+            document.querySelectorAll('#time-chips-container .time-btn').forEach(btn => {
+                btn.className = "time-btn bg-gray-50 text-gray-700 font-medium px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-orange-50";
+            });
+            btnElement.className = "time-btn bg-orange-600 text-white font-semibold px-3 py-1.5 rounded-lg border border-orange-600 shadow-sm";
+            renderRecipes();
+        }
+
+        function handleSearch() {
+            searchQuery = document.getElementById('search-input').value.trim().toLowerCase();
+            renderRecipes();
+        }
+
+        function resetFilters() {
+            currentVeg = 'all';
+            currentTime = 'all';
+            searchQuery = '';
+            document.getElementById('search-input').value = '';
+            
+            const firstVegBtn = document.querySelector('#veg-chips-container button');
+            const firstTimeBtn = document.querySelector('#time-chips-container button');
+            if (firstVegBtn) setVegFilter('all', firstVegBtn);
+            if (firstTimeBtn) setTimeFilter('all', firstTimeBtn);
+        }
+
+        function renderRecipes() {
+            const grid = document.getElementById('recipe-grid');
+            const emptyState = document.getElementById('empty-state');
+            const countSpan = document.getElementById('recipe-count');
+
+            const db = (typeof recipes !== 'undefined') ? recipes : [];
+
+            const filtered = db.filter(item => {
+                // Veg filter match
+                let matchesVeg = false;
+                if (currentVeg === 'all') {
+                    matchesVeg = true;
+                } else if (currentVeg === 'leafy') {
+                    matchesVeg = leafyVegList.includes(item.vegetable);
+                } else {
+                    matchesVeg = (item.vegetable === currentVeg);
+                }
+
+                // Time filter match
+                const matchesTime = (currentTime === 'all' || item.time === currentTime);
+
+                // Multi-lingual Smart Search match
+                let matchesSearch = true;
+                if (searchQuery !== '') {
+                    const titleText = (item.title || '').toLowerCase();
+                    const descText = (item.shortDesc || '').toLowerCase();
+                    const ingText = (item.ingredients || []).join(' ').toLowerCase();
+                    const keywordMatch = (item.keywords || []).some(k => k.toLowerCase().includes(searchQuery));
+
+                    matchesSearch = titleText.includes(searchQuery) || 
+                                    descText.includes(searchQuery) || 
+                                    ingText.includes(searchQuery) || 
+                                    keywordMatch;
+                }
+
+                return matchesVeg && matchesTime && matchesSearch;
+            });
+
+            countSpan.innerText = filtered.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                grid.innerHTML = filtered.map(item => `
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-col justify-between hover:border-orange-200 hover:shadow-md transition">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between text-[11px] text-gray-500 font-medium">
+                                <span class="bg-amber-100/70 text-amber-900 px-2 py-0.5 rounded-md">⏱ ${item.timeText || '१५ मिनिटे'}</span>
+                                <span class="bg-orange-50 text-orange-700 px-2 py-0.5 rounded-md">${item.taste || 'मध्यम तिखट'}</span>
+                            </div>
+                            <h4 class="text-base font-bold text-gray-900 leading-snug">
+                                <a href="recipe.html?id=${item.id}" class="hover:text-orange-600 transition">
+                                    ${item.title}
+                                </a>
+                            </h4>
+                            <p class="text-xs text-gray-600 line-clamp-2 leading-relaxed">
+                                ${item.shortDesc}
+                            </p>
+                        </div>
+                        <div class="pt-4 mt-2 border-t border-gray-50 flex items-center justify-between">
+                            <span class="text-[11px] text-gray-500">डबा / नाश्ता</span>
+                            <a href="recipe.html?id=${item.id}" class="inline-flex items-center gap-1 text-xs font-bold text-orange-600 hover:text-orange-700">
+                                कृती पहा →
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+    </script>
+</body>
+</html>
